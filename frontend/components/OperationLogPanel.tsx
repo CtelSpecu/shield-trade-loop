@@ -3,6 +3,7 @@
 // Updated by Hamiltion23 at 2025-11-03 11:22
 "use client";
 
+import { useMemo } from "react";
 import { useOperationLog } from "@/hooks/useOperationLog";
 
 // Minimal inline Heroicons (MIT) SVGs as React components to avoid adding a dependency
@@ -49,6 +50,22 @@ export function OperationLogPanel() {
     return <IconInfo className={cls} />;
   };
 
+  const items = useMemo(() => {
+    if (entries.length === 0) return null;
+    return entries.map((e) => (
+      <div key={e.id} className="flex items-start gap-2">
+        <div className="mt-0.5 text-base-content/70">{renderIcon(e.type)}</div>
+        <div>
+          <div className="text-sm font-medium leading-tight">{e.title}</div>
+          {e.details ? (
+            <div className="text-xs text-base-content/60 leading-snug whitespace-pre-wrap break-words">{e.details}</div>
+          ) : null}
+          <div className="text-[10px] text-base-content/50">{new Date(e.ts).toLocaleTimeString()}</div>
+        </div>
+      </div>
+    ));
+  }, [entries]);
+
   return (
     <div className="card bg-base-100 shadow border w-full max-w-full overflow-hidden">
       <div className="card-body p-4">
@@ -61,24 +78,12 @@ export function OperationLogPanel() {
           {entries.length === 0 ? (
             <div className="text-sm text-base-content/60">No entries yet</div>
           ) : (
-            entries.map((e) => (
-              <div key={e.id} className="flex items-start gap-2">
-                <div className="mt-0.5 text-base-content/70">{renderIcon(e.type)}</div>
-                <div>
-                  <div className="text-sm font-medium leading-tight">{e.title}</div>
-                  {e.details ? (
-                    <div className="text-xs text-base-content/60 leading-snug whitespace-pre-wrap break-words">{e.details}</div>
-                  ) : null}
-                  <div className="text-[10px] text-base-content/50">{new Date(e.ts).toLocaleTimeString()}</div>
-                </div>
-              </div>
-            ))
+            items
           )}
         </div>
       </div>
     </div>
   );
 }
-
 
 
